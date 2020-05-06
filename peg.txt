@@ -1,0 +1,17 @@
+Start = roll
+roll = _ "roll" _ a:Expression {return {opt:"roll",a:a}}
+Expression
+	=	a:Term _ opt:("+" / "-") _ b:Expression {return {opt:opt,a:a,b:b}}
+    / a:Term {return a }
+Term
+	=	a:Factor _ opt:"*" _ b:Term {return {opt:opt,a:a,b:b}}
+    / a:Factor {return a }
+Factor
+  = "(" _ a:Expression _ ")" {return {opt:"brackets",a:a}}
+  / a:ADB	{return a }
+  / a:Integer	{return a }
+
+ADB = a:([0-9][0-9]?[0-9]?)? opt:"D" b:([0-9][0-9]?[0-9]?) {return {opt:opt,a:a==null?1:parseInt(a.join("")),b:parseInt(b.join(""))}}
+Integer	= _ [0-9]+ { return parseInt(text(), 10); }
+
+_ "whitespace"	= [ \t\n\r]*
